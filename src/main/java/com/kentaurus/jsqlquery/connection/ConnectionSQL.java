@@ -3,14 +3,13 @@ package com.kentaurus.jsqlquery.connection;
 import java.io.FileInputStream;
 import java.util.Properties;
 
+import com.kentaurus.jsqlquery.constants.AppConstants;
 import com.kentaurus.jsqlquery.model.Encripta;
 import com.kentaurus.jsqlquery.view.ConnectionStringPanel;
 
 public class ConnectionSQL {
-	public static final String ARCHIVO_CONEXION = "./data/ConexionDB.keta";
-	public static final String clave = "LAS AVES VUELAN LIBREMENTE";
 
-	private String motorBD;
+	private String dbType;
 	private String hostName; // 127.0.0.1
 	private String portName; // 3306
 	private String dataBaseName; // DAO
@@ -20,20 +19,20 @@ public class ConnectionSQL {
 
 	public ConnectionSQL() throws Exception {
 		try {
-			Encripta encripta = new Encripta(clave);
+			Encripta encripta = new Encripta(AppConstants.ENCRYPTION_PASSWORD);
 			Properties archivo = new Properties();
-			try (FileInputStream datos = new FileInputStream(ARCHIVO_CONEXION)) {
+			try (FileInputStream datos = new FileInputStream(AppConstants.CONNECTION_FILE)) {
 				archivo.load(datos);
 
-				String hostNameStr = archivo.getProperty("hostName");
+				String hostNameStr = archivo.getProperty(AppConstants.HOSTNAME_PARAMETER);
 				if (hostNameStr == null)
-					throw new Exception("La propiedad 'Hostname' no se ha definido.");
+					throw new Exception(AppConstants.ERROR_HOSTNAME_NULL);
 				if (hostNameStr.trim().equalsIgnoreCase(""))
-					throw new Exception("La propiedad 'Hostname' no puede estar vacia.");
+					throw new Exception(AppConstants.ERROR_HOSTNAME_EMPTY);
 
 				hostName = encripta.desencripta(hostNameStr);
 
-				String portNameStr = archivo.getProperty("portName");
+				String portNameStr = archivo.getProperty(AppConstants.PORT_NAME_PARAMETER);
 				if (portNameStr == null)
 					throw new Exception("La propiedad 'nombre puerto' no se ha definido.");
 				if (portNameStr.trim().equalsIgnoreCase(""))
@@ -64,7 +63,7 @@ public class ConnectionSQL {
 					throw new Exception("La contrase�a no puede estar vacia.");
 
 				this.password = encripta.desencripta(passwordStr);
-				this.motorBD = ConnectionStringPanel.MOTORES_DB[0];
+				this.dbType = ConnectionStringPanel.MOTORES_DB[0];
 			}
 		} catch (Exception ex) {
 			throw new Exception(ex.getMessage());
@@ -112,9 +111,9 @@ public class ConnectionSQL {
 	}
 
 	public String getDataBaseUrl() {
-		if (this.motorBD.equals(ConnectionStringPanel.MOTORES_DB[0])) {
+		if (this.dbType.equals(ConnectionStringPanel.MOTORES_DB[0])) {
 			return dataBaseUrl = "jdbc:sqlserver://" + hostName + ":" + portName + ";databaseName=" + dataBaseName;
-		} else if (this.motorBD.equals(ConnectionStringPanel.MOTORES_DB[1])) {
+		} else if (this.dbType.equals(ConnectionStringPanel.MOTORES_DB[1])) {
 			return dataBaseUrl = "jdbc:mysql://" + hostName + ":" + portName + "/" + dataBaseName
 					+ "?verifyServerCertificate=true&useSSL=true&requireSSL=true";
 		} else {
@@ -127,11 +126,11 @@ public class ConnectionSQL {
 	}
 
 	public String getMotorBD() {
-		return motorBD;
+		return dbType;
 	}
 
 	public void setMotorBD(String motorBD) {
-		this.motorBD = motorBD;
+		this.dbType = motorBD;
 	}
 
 	@Override

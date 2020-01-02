@@ -17,6 +17,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
 import com.kentaurus.jsqlquery.connection.ConnectionSQL;
+import com.kentaurus.jsqlquery.constants.AppConstants;
 import com.kentaurus.jsqlquery.model.Encripta;
 import com.kentaurus.jsqlquery.view.ConnectionStringPanel;
 import com.kentaurus.jsqlquery.view.LogEventsPanel;
@@ -223,10 +224,10 @@ public class ControllerApp {
 
 	public void guardarConfiguracion() throws Exception {
 		try {
-			Encripta encripta = new Encripta(ConnectionSQL.clave);
+			Encripta encripta = new Encripta(AppConstants.ENCRYPTION_PASSWORD);
 			ConnectionSQL connectionSave = pnlConnection.obtenerCadenaSQL();
 			Properties propiedades = new Properties();
-			try (OutputStream output = new FileOutputStream(ConnectionSQL.ARCHIVO_CONEXION)) {
+			try (OutputStream output = new FileOutputStream(AppConstants.CONNECTION_FILE)) {
 				propiedades.setProperty("hostName", encripta.encriptaCadena(connectionSave.getHostName()));
 				propiedades.setProperty("portName", encripta.encriptaCadena(connectionSave.getPortName()));
 				propiedades.setProperty("dataBaseName", encripta.encriptaCadena(connectionSave.getDataBaseName()));
