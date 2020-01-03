@@ -2,42 +2,43 @@ package com.kentaurus.jsqlquery.model;
 
 import java.security.MessageDigest;
 import java.util.Arrays;
+
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-public class Encripta {
-	String clave;
+public class Encrypt {
+	private String password;
 
-	public Encripta(String clave) {
-		this.clave = clave;
+	public Encrypt(String clave) {
+		this.password = clave;
 	}
 
-	public String encriptaCadena(String mensaje) throws Exception {
-		byte[] rpta = encripta(mensaje);
-		StringBuilder mensaje1 = new StringBuilder();
+	public String encryptString(String message) throws Exception {
+		byte[] rpta = encrypt(message);
+		StringBuilder messageStr = new StringBuilder();
 		for (int i = 0; i < rpta.length; i++) {
 			String cad = Integer.toHexString(rpta[i]).toUpperCase();
 			if (i != 0) {
-				mensaje1.append("-");
+				messageStr.append("-");
 			}
 			if (cad.length() < 2) {
-				mensaje1.append("0");
-				mensaje1.append(cad);
+				messageStr.append("0");
+				messageStr.append(cad);
 			} else if (cad.length() > 2) {
-				mensaje1.append(cad.substring(6, 8));
+				messageStr.append(cad.substring(6, 8));
 			} else {
-				mensaje1.append(cad);
+				messageStr.append(cad);
 			}
 		}
-		return mensaje1.toString();
+		return messageStr.toString();
 	}
 
-	public byte[] encripta(String message) throws Exception {
+	public byte[] encrypt(String message) throws Exception {
 		try {
 			final MessageDigest md = MessageDigest.getInstance("md5");
-			final byte[] digestOfPassword = md.digest(clave.getBytes("utf-8"));
+			final byte[] digestOfPassword = md.digest(password.getBytes("utf-8"));
 			final byte[] keyBytes = Arrays.copyOf(digestOfPassword, 24);
 			for (int j = 0, k = 16; j < 8;) {
 				keyBytes[k++] = keyBytes[j++];
@@ -54,19 +55,19 @@ public class Encripta {
 		}
 	}
 
-	public String desencripta(String cadena) throws Exception {
-		String[] sBytes = cadena.split("-");
+	public String decryptedString(String string) throws Exception {
+		String[] sBytes = string.split("-");
 		byte[] bytes = new byte[sBytes.length];
 		for (int i = 0; i < sBytes.length; i++) {
 			bytes[i] = (byte) Integer.parseInt(sBytes[i], 16);
 		}
-		return desencripta(bytes);
+		return decrypted(bytes);
 	}
 
-	public String desencripta(byte[] message) throws Exception {
+	public String decrypted(byte[] message) throws Exception {
 		try {
 			final MessageDigest md = MessageDigest.getInstance("md5");
-			final byte[] digestOfPassword = md.digest(clave.getBytes("utf-8"));
+			final byte[] digestOfPassword = md.digest(password.getBytes("utf-8"));
 			final byte[] keyBytes = Arrays.copyOf(digestOfPassword, 24);
 			for (int j = 0, k = 16; j < 8;) {
 				keyBytes[k++] = keyBytes[j++];

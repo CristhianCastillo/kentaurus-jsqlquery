@@ -7,29 +7,31 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import com.kentaurus.jsqlquery.constants.AppConstants;
+
 public class ResultQueryPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
-	private int numeroResultado;
+	private int numberResult;
 	private JTabbedPane tabs;
 
 	public ResultQueryPanel() {
-		this.numeroResultado = 0;
+		this.numberResult = 0;
 		this.setLayout(new BorderLayout());
 		this.tabs = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
-		this.add(tabs, BorderLayout.CENTER);
+		this.add(this.tabs, BorderLayout.CENTER);
 	}
 
-	public void agregarResultado(JComponent componente) {
+	public void addResult(JComponent component) {
 		try {
-			if (componente != null) {
-				numeroResultado++;
-				tabs.addTab("Resultado " + numeroResultado, null, componente, "Resultado " + numeroResultado);
+			if (component != null) {
+				this.numberResult++;
+				this.tabs.addTab(AppConstants.TAB_RESULT + this.numberResult, null, component, AppConstants.TAB_RESULT + this.numberResult);
 				int count = tabs.getTabCount();
-				tabs.setSelectedIndex(count - 1);
+				this.tabs.setSelectedIndex(count - 1);
 			}
 		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(this, ex.getMessage(), "Agregar Resultado", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, ex.getMessage(), AppConstants.TITLE_MESSAGE_ADD_RESULT, JOptionPane.ERROR_MESSAGE);
 		}
 	}
 }

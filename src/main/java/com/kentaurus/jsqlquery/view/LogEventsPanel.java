@@ -8,35 +8,37 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import com.kentaurus.jsqlquery.constants.AppConstants;
+
 public class LogEventsPanel extends JPanel {
+
 	private static final long serialVersionUID = 1L;
 
-	private int numeroLineas;
+	private int numberLines;
 	private JTextArea txtLogEvents;
 
 	public LogEventsPanel() {
-		numeroLineas = 0;
+		numberLines = 0;
 		this.setLayout(new BorderLayout());
-		txtLogEvents = new JTextArea(10, 50);
-		txtLogEvents.setEditable(false);
-		txtLogEvents.setBackground(Color.ORANGE);
-		// txtLogEvents.setLineWrap(true);
-		// txtLogEvents.setWrapStyleWord(true);
-		JScrollPane scroll = new JScrollPane(txtLogEvents);
+		this.txtLogEvents = new JTextArea(10, 50);
+		this.txtLogEvents.setEditable(false);
+		this.txtLogEvents.setBackground(Color.ORANGE);
+		JScrollPane scroll = new JScrollPane(this.txtLogEvents);
 		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		this.add(scroll, BorderLayout.CENTER);
 	}
 
-	public void agregarEvento(String descripcion) {
+	public void addEvent(String description) {
 		try {
-			if (numeroLineas == 0)
-				txtLogEvents.append(descripcion);
+			if (this.numberLines == 0)
+				this.txtLogEvents.append(description);
 			else
-				txtLogEvents.append("\n" + descripcion);
-			txtLogEvents.setCaretPosition(txtLogEvents.getDocument().getLength());
-			numeroLineas++;
+				this.txtLogEvents.append("\n" + description);
+			this.txtLogEvents.setCaretPosition(this.txtLogEvents.getDocument().getLength());
+			this.numberLines++;
 		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(this, ex.getMessage(), "Agregar Evento", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, ex.getMessage(), AppConstants.PANEL_TITLE_LOG_EVENTS,
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 

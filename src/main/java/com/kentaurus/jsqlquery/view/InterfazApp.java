@@ -2,36 +2,27 @@ package com.kentaurus.jsqlquery.view;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
+import com.kentaurus.jsqlquery.constants.AppConstants;
 import com.kentaurus.jsqlquery.controller.ControllerApp;
 
-/**
- * Clase que representa la ventana principal de la aplicaci�n.
- * 
- * @author Cristhian Eduardo Castillo Erazo.
- *
- */
 public class InterfazApp extends JFrame {
 
-	/**
-	 * Serial version UID.
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private ControllerApp ctrl;
-
 	private ConnectionStringPanel pnlConnectionString;
 	private OptionsPanel pnlOptionsQuery;
-
 	private QueryPanel pnlQuery;
 	private ResultQueryPanel pnlResultQuery;
-	private LogEventsPanel pnlLogEventos;
-
+	private LogEventsPanel pnlLogEvents;
 	private StatusPanel pnlStatus;
 
 	public InterfazApp() {
@@ -39,10 +30,9 @@ public class InterfazApp extends JFrame {
 		try {
 			this.ctrl = new ControllerApp();
 
-//			URL rutaArchivos = InterfazApp.class.getResource("/jsqlquery.png");
-//			Image icono = Toolkit.getDefaultToolkit().getImage(rutaArchivos);
-//			this.setIconImage(icono);
-			this.setTitle("JSQLQuery V1.0");
+			Image icon = Toolkit.getDefaultToolkit().getImage(AppConstants.ICON_APPLICATION);
+			this.setIconImage(icon);
+			this.setTitle(AppConstants.TITLE_APPLICATION);
 			this.setLayout(new BorderLayout());
 
 			this.pnlConnectionString = new ConnectionStringPanel();
@@ -50,39 +40,38 @@ public class InterfazApp extends JFrame {
 
 			this.pnlQuery = new QueryPanel();
 			this.pnlResultQuery = new ResultQueryPanel();
-			this.pnlLogEventos = new LogEventsPanel();
+			this.pnlLogEvents = new LogEventsPanel();
 
 			this.pnlStatus = new StatusPanel();
 
-			JPanel pnlNorte = new JPanel();
-			pnlNorte.setLayout(new BorderLayout());
-			pnlNorte.add(pnlConnectionString, BorderLayout.NORTH);
-			pnlNorte.add(pnlOptionsQuery, BorderLayout.CENTER);
+			JPanel pnlNorth = new JPanel();
+			pnlNorth.setLayout(new BorderLayout());
+			pnlNorth.add(pnlConnectionString, BorderLayout.NORTH);
+			pnlNorth.add(pnlOptionsQuery, BorderLayout.CENTER);
 
-			JSplitPane splitPaneSecundario = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, pnlQuery, pnlLogEventos);
-			splitPaneSecundario.setOneTouchExpandable(true);
-			splitPaneSecundario.setDividerLocation(300);
-			JSplitPane splitPanePrincipal = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, splitPaneSecundario,
+			JSplitPane splitPaneSecondary = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, pnlQuery, pnlLogEvents);
+			splitPaneSecondary.setOneTouchExpandable(true);
+			splitPaneSecondary.setDividerLocation(300);
+			JSplitPane splitPanePrincipal = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, splitPaneSecondary,
 					pnlResultQuery);
 
-			JPanel pnlCentro = new JPanel();
-			pnlCentro.setLayout(new BorderLayout());
-			pnlCentro.add(splitPanePrincipal, BorderLayout.CENTER);
+			JPanel pnlCenter = new JPanel();
+			pnlCenter.setLayout(new BorderLayout());
+			pnlCenter.add(splitPanePrincipal, BorderLayout.CENTER);
 
-			this.add(pnlNorte, BorderLayout.NORTH);
-			this.add(pnlCentro, BorderLayout.CENTER);
+			this.add(pnlNorth, BorderLayout.NORTH);
+			this.add(pnlCenter, BorderLayout.CENTER);
 			this.add(pnlStatus, BorderLayout.SOUTH);
 
 			this.setExtendedState(MAXIMIZED_BOTH);
 			this.setMinimumSize(new Dimension(1000, 600));
 			this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			this.setLocationRelativeTo(null);
-//			this.setResizable(false);
-
-			this.ctrl.conectar(pnlConnectionString, pnlQuery, pnlResultQuery, pnlStatus, pnlLogEventos);
-			this.ctrl.actualizarVistaParametros();
+			this.ctrl.conect(pnlConnectionString, pnlQuery, pnlResultQuery, pnlStatus, pnlLogEvents);
+			this.ctrl.updateViewParameters();
 		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(this, ex.getMessage(), "JSqlQuery", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, ex.getMessage(), AppConstants.TITLE_APPLICATION,
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 

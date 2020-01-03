@@ -18,7 +18,7 @@ import javax.swing.table.DefaultTableModel;
 
 import com.kentaurus.jsqlquery.connection.ConnectionSQL;
 import com.kentaurus.jsqlquery.constants.AppConstants;
-import com.kentaurus.jsqlquery.model.Encripta;
+import com.kentaurus.jsqlquery.model.Encrypt;
 import com.kentaurus.jsqlquery.view.ConnectionStringPanel;
 import com.kentaurus.jsqlquery.view.LogEventsPanel;
 import com.kentaurus.jsqlquery.view.QueryPanel;
@@ -28,212 +28,208 @@ import com.kentaurus.jsqlquery.view.StatusPanel;
 public class ControllerApp {
 	private ConnectionStringPanel pnlConnection;
 	private QueryPanel pnlQuery;
-	private ResultQueryPanel pnlResultadoQuery;
+	private ResultQueryPanel pnlResultQuery;
 	private StatusPanel pnlStatus;
-	private LogEventsPanel pnlEventos;
+	private LogEventsPanel pnlEvents;
 
 	public ControllerApp() throws Exception {
-		try {
-		} catch (Exception ex) {
-			throw new Exception(ex.getMessage());
-		}
 	}
 
-	public void conectar(ConnectionStringPanel pnlConnection, QueryPanel pnlQuery, ResultQueryPanel pnlResultadoQuery,
-			StatusPanel pnlStatus, LogEventsPanel pnlEventos) throws Exception {
+	public void conect(ConnectionStringPanel pnlConnection, QueryPanel pnlQuery, ResultQueryPanel pnlResultQuery,
+			StatusPanel pnlStatus, LogEventsPanel pnlEvents) throws Exception {
 		try {
 			this.pnlConnection = pnlConnection;
 			this.pnlQuery = pnlQuery;
-			this.pnlResultadoQuery = pnlResultadoQuery;
+			this.pnlResultQuery = pnlResultQuery;
 			this.pnlStatus = pnlStatus;
-			this.pnlEventos = pnlEventos;
+			this.pnlEvents = pnlEvents;
 		} catch (Exception ex) {
 			throw new Exception(ex.getMessage());
 		}
 	}
 
-	public void actualizarVistaParametros() throws Exception {
+	public void updateViewParameters() throws Exception {
 		try {
-			this.pnlConnection.actualizarParametros();
+			this.pnlConnection.updateParameters();
 		} catch (Exception ex) {
 			throw new Exception(ex.getMessage());
 		}
 	}
 
-	public int ejecutarSentenciaTablaResultado(int timeOut) throws Exception {
+	public int executeJudgmentTableResult(int timeOut) throws Exception {
 		Connection connection = null;
-		PreparedStatement queryValidado = null;
+		PreparedStatement queryValidate = null;
 		ResultSet resultSet = null;
-		int numeroFilasAfectadas = 0;
+		int numberRowsAfected = 0;
 		try {
-			String query = pnlQuery.obtenerQuery();
+			String query = pnlQuery.getQuery();
 			if (query != null && !query.trim().equals("")) {
-				ConnectionSQL conexionSql = pnlConnection.obtenerCadenaSQL();
-				connection = DriverManager.getConnection(conexionSql.getDataBaseUrl(), conexionSql.getUserName(),
-						conexionSql.getPassword());
-				queryValidado = connection.prepareStatement(query);
-				queryValidado.setQueryTimeout(timeOut);
-				resultSet = queryValidado.executeQuery();
-				ResultSetMetaData metaDatos = resultSet.getMetaData();
+				ConnectionSQL connectionSql = pnlConnection.getConnectionSQL();
+				connection = DriverManager.getConnection(connectionSql.getDataBaseUrl(), connectionSql.getUserName(),
+						connectionSql.getPassword());
+				queryValidate = connection.prepareStatement(query);
+				queryValidate.setQueryTimeout(timeOut);
+				resultSet = queryValidate.executeQuery();
+				ResultSetMetaData metaData = resultSet.getMetaData();
 				DefaultTableModel tableModel = new DefaultTableModel();
-				int numeroColumnas = metaDatos.getColumnCount();
-				Object[] etiquetas = new Object[numeroColumnas];
-				for (int i = 0; i < numeroColumnas; i++) {
-					etiquetas[i] = metaDatos.getColumnLabel(i + 1);
+				int numberColumns = metaData.getColumnCount();
+				Object[] labels = new Object[numberColumns];
+				for (int i = 0; i < numberColumns; i++) {
+					labels[i] = metaData.getColumnLabel(i + 1);
 				}
-				tableModel.setColumnIdentifiers(etiquetas);
+				tableModel.setColumnIdentifiers(labels);
 				while (resultSet.next()) {
-					Object[] fila = new Object[numeroColumnas];
-					for (int i = 0; i < numeroColumnas; i++)
-						fila[i] = resultSet.getObject(i + 1);
-					tableModel.addRow(fila);
+					Object[] row = new Object[numberColumns];
+					for (int i = 0; i < numberColumns; i++)
+						row[i] = resultSet.getObject(i + 1);
+					tableModel.addRow(row);
 				}
-				JTable tablaResultados = new JTable();
-				tablaResultados.setColumnSelectionAllowed(false);
-				tablaResultados.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-				tablaResultados.setFont(new Font("Arial", Font.BOLD, 12));
-				tablaResultados.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-				tablaResultados.getTableHeader().setReorderingAllowed(false);
+				JTable tableResults = new JTable();
+				tableResults.setColumnSelectionAllowed(false);
+				tableResults.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				tableResults.setFont(new Font("Arial", Font.BOLD, 12));
+				tableResults.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+				tableResults.getTableHeader().setReorderingAllowed(false);
 
 				JScrollPane scroll = new JScrollPane();
-				scroll.setViewportView(tablaResultados);
+				scroll.setViewportView(tableResults);
 				scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 				scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-				tablaResultados.setModel(tableModel);
-				numeroFilasAfectadas = tableModel.getRowCount();
-				pnlResultadoQuery.agregarResultado(scroll);
+				tableResults.setModel(tableModel);
+				numberRowsAfected = tableModel.getRowCount();
+				pnlResultQuery.addResult(scroll);
 			} else
-				throw new Exception("El query no puede estar vacio.");
+				throw new Exception(AppConstants.ERROR_QUERY_EMPTY);
 		} catch (Exception ex) {
-			numeroFilasAfectadas = 0;
+			numberRowsAfected = 0;
 			throw new Exception(ex.getMessage());
 		} finally {
 			if (connection != null) {
 				connection.close();
 			}
-			if (queryValidado != null) {
-				queryValidado.close();
+			if (queryValidate != null) {
+				queryValidate.close();
 			}
 			if (resultSet != null) {
 				resultSet.close();
 			}
 		}
-		return numeroFilasAfectadas;
+		return numberRowsAfected;
 	}
 
-	public int ejecutarSentenciaTextoResultado(int timeOut) throws Exception {
+	public int executeSentenceTextResult(int timeOut) throws Exception {
 		Connection connection = null;
-		PreparedStatement queryValidado = null;
+		PreparedStatement queryValidate = null;
 		ResultSet resultSet = null;
-		int numeroFilasAfectadas = 0;
+		int numberRowsAfected = 0;
 		try {
-			String resultado = "";
-			String query = pnlQuery.obtenerQuery();
+			String result = "";
+			String query = pnlQuery.getQuery();
 			if (query != null && !query.trim().equals("")) {
-				ConnectionSQL conexionSql = pnlConnection.obtenerCadenaSQL();
-				connection = DriverManager.getConnection(conexionSql.getDataBaseUrl(), conexionSql.getUserName(),
-						conexionSql.getPassword());
-				queryValidado = connection.prepareStatement(query);
-				queryValidado.setQueryTimeout(timeOut);
-				resultSet = queryValidado.executeQuery();
-				ResultSetMetaData metaDatos = resultSet.getMetaData();
+				ConnectionSQL connectionSql = pnlConnection.getConnectionSQL();
+				connection = DriverManager.getConnection(connectionSql.getDataBaseUrl(), connectionSql.getUserName(),
+						connectionSql.getPassword());
+				queryValidate = connection.prepareStatement(query);
+				queryValidate.setQueryTimeout(timeOut);
+				resultSet = queryValidate.executeQuery();
+				ResultSetMetaData metaData = resultSet.getMetaData();
 
-				int numeroColumnas = metaDatos.getColumnCount();
+				int numberColumns = metaData.getColumnCount();
 				while (resultSet.next()) {
-					numeroFilasAfectadas++;
-					for (int i = 0; i < numeroColumnas; i++) {
+					numberRowsAfected++;
+					for (int i = 0; i < numberColumns; i++) {
 						String res = resultSet.getObject(i + 1).toString();
-						resultado = resultado + String.format("%-8s\t", res);
+						result = result + String.format("%-8s\t", res);
 					}
-					resultado += "\n";
+					result += "\n";
 				}
 				JTextArea txtLogEvents = new JTextArea(10, 50);
 				txtLogEvents.setEditable(false);
-				txtLogEvents.setText(resultado);
+				txtLogEvents.setText(result);
 
 				JScrollPane scroll = new JScrollPane();
 				scroll.setViewportView(txtLogEvents);
 				scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 				scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-				pnlResultadoQuery.agregarResultado(scroll);
+				pnlResultQuery.addResult(scroll);
 			} else
-				throw new Exception("El query no puede estar vacio.");
+				throw new Exception(AppConstants.ERROR_QUERY_EMPTY);
 		} catch (Exception ex) {
-			numeroFilasAfectadas = 0;
+			numberRowsAfected = 0;
 			throw new Exception(ex.getMessage());
 		} finally {
 			if (connection != null) {
 				connection.close();
 			}
-			if (queryValidado != null) {
-				queryValidado.close();
+			if (queryValidate != null) {
+				queryValidate.close();
 			}
 			if (resultSet != null) {
 				resultSet.close();
 			}
 		}
-		return numeroFilasAfectadas;
+		return numberRowsAfected;
 	}
 
-	public int ejecutarSentenciaSQL(int timeOut) throws Exception {
+	public int executeSQLstatement(int timeOut) throws Exception {
 		Connection connection = null;
-		PreparedStatement queryValidado = null;
-		int numeroFilasAfectadas = 0;
+		PreparedStatement queryValidate = null;
+		int numberRowsAfected = 0;
 		try {
-			String query = pnlQuery.obtenerQuery();
+			String query = pnlQuery.getQuery();
 			if (query != null && !query.trim().equals("")) {
-				ConnectionSQL conexionSql = pnlConnection.obtenerCadenaSQL();
-				connection = DriverManager.getConnection(conexionSql.getDataBaseUrl(), conexionSql.getUserName(),
-						conexionSql.getPassword());
-				queryValidado = connection.prepareStatement(query);
-				queryValidado.setQueryTimeout(timeOut);
-				numeroFilasAfectadas = queryValidado.executeUpdate();
+				ConnectionSQL connectionSql = pnlConnection.getConnectionSQL();
+				connection = DriverManager.getConnection(connectionSql.getDataBaseUrl(), connectionSql.getUserName(),
+						connectionSql.getPassword());
+				queryValidate = connection.prepareStatement(query);
+				queryValidate.setQueryTimeout(timeOut);
+				numberRowsAfected = queryValidate.executeUpdate();
 			} else
-				throw new Exception("El query no puede estar vacio.");
+				throw new Exception(AppConstants.ERROR_QUERY_EMPTY);
 		} catch (Exception ex) {
-			numeroFilasAfectadas = 0;
+			numberRowsAfected = 0;
 			throw new Exception(ex.getMessage());
 		} finally {
 			if (connection != null) {
 				connection.close();
 			}
-			if (queryValidado != null) {
-				queryValidado.close();
+			if (queryValidate != null) {
+				queryValidate.close();
 			}
 		}
-		return numeroFilasAfectadas;
+		return numberRowsAfected;
 	}
 
-	public void agregarProceso(String descripcion) throws Exception {
+	public void addProcess(String description) throws Exception {
 		try {
-			this.pnlEventos.agregarEvento(descripcion);
-			this.pnlStatus.agregarProceso();
+			this.pnlEvents.addEvent(description);
+			this.pnlStatus.addProcess();
 		} catch (Exception ex) {
 			throw new Exception(ex.getMessage());
 		}
 	}
 
-	public void eliminarProceso(String descripcion) throws Exception {
+	public void deleteProcess(String descripcion) throws Exception {
 		try {
-			this.pnlEventos.agregarEvento(descripcion);
-			this.pnlStatus.eliminarProceso();
+			this.pnlEvents.addEvent(descripcion);
+			this.pnlStatus.deleteProcess();
 		} catch (Exception ex) {
 			throw new Exception(ex.getMessage());
 		}
 	}
 
-	public void guardarConfiguracion() throws Exception {
+	public void saveSettings() throws Exception {
 		try {
-			Encripta encripta = new Encripta(AppConstants.ENCRYPTION_PASSWORD);
-			ConnectionSQL connectionSave = pnlConnection.obtenerCadenaSQL();
-			Properties propiedades = new Properties();
+			Encrypt encrypt = new Encrypt(AppConstants.ENCRYPTION_PASSWORD);
+			ConnectionSQL connectionSave = pnlConnection.getConnectionSQL();
+			Properties properties = new Properties();
 			try (OutputStream output = new FileOutputStream(AppConstants.CONNECTION_FILE)) {
-				propiedades.setProperty("hostName", encripta.encriptaCadena(connectionSave.getHostName()));
-				propiedades.setProperty("portName", encripta.encriptaCadena(connectionSave.getPortName()));
-				propiedades.setProperty("dataBaseName", encripta.encriptaCadena(connectionSave.getDataBaseName()));
-				propiedades.setProperty("userName", encripta.encriptaCadena(connectionSave.getUserName()));
-				propiedades.setProperty("password", encripta.encriptaCadena(connectionSave.getPassword()));
-				propiedades.store(output, null);
+				properties.setProperty(AppConstants.HOSTNAME_PARAMETER, encrypt.encryptString(connectionSave.getHostName()));
+				properties.setProperty(AppConstants.PORT_NAME_PARAMETER, encrypt.encryptString(connectionSave.getPortName()));
+				properties.setProperty(AppConstants.DATABASE_PARAMETER, encrypt.encryptString(connectionSave.getDataBaseName()));
+				properties.setProperty(AppConstants.USERNAME_PARAMETER, encrypt.encryptString(connectionSave.getUserName()));
+				properties.setProperty(AppConstants.PASSWORD_PARAMETER, encrypt.encryptString(connectionSave.getPassword()));
+				properties.store(output, null);
 			}
 
 		} catch (Exception ex) {

@@ -20,108 +20,109 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
+import com.kentaurus.jsqlquery.constants.AppConstants;
 import com.kentaurus.jsqlquery.controller.ControllerApp;
 
 public class OptionsPanel extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	public static final String EJECUTAR_SENTENCIA_SQL = "Ejecutar sentencia sql";
-	public static final String DETENER_EJECUCION_SENTENCIA_SQL = "Detener sentencia sql";
-	public static final String GUARDAR_CONFIGURACION = "Guardar configuracion";
+	public static final String EXECUTE_SQL_SENTENCE_SQL = "Ejecutar sentencia sql";
+	public static final String STOP_SQL_SENTENCE_EXECUTION = "Detener sentencia sql";
+	public static final String SAVE_SETTINGS = "Guardar configuracion";
 
 	private ControllerApp ctrl;
-	private int numeroSentenciaSql;
+	private int numberJudgmentSql;
 	private int timeOut;
 
-	private JLabel lblTiempoEjecucion;
-	private JLabel lblSegundos;
-	private JTextField txtTiempoEjecucion;
-	private JRadioButton rbtnRetornarTablaResultado;
-	private JRadioButton rbtnRetornarTextoResultado;
-	private JRadioButton rbtnEjecutarSentenciaSql;
-	private JButton btnEjecutar;
-	private ButtonGroup grupoRadios;
-	private JButton btnGuardarConfiguracion;
+	private JLabel lblTimeExecution;
+	private JLabel lblSeconds;
+	private JTextField txtTimeExecution;
+	private JRadioButton rbtnReturnTableResult;
+	private JRadioButton rbtnReturnTextResult;
+	private JRadioButton rbtnExecuteSentenceSql;
+	private JButton btnRun;
+	private ButtonGroup groupRadios;
+	private JButton btnSaveConfiguration;
 
 	public OptionsPanel(ControllerApp ctrl) {
 		this.timeOut = 0;
-		this.numeroSentenciaSql = 0;
+		this.numberJudgmentSql = 0;
 		this.ctrl = ctrl;
-		this.setBorder(new TitledBorder("Query"));
+		this.setBorder(new TitledBorder(AppConstants.PANEL_TITLE_QUERY));
 		this.setLayout(new BorderLayout());
 
-		lblTiempoEjecucion = new JLabel("Tiempo M�ximo Ejecuci�n: ");
-		lblSegundos = new JLabel("(segundos)");
-		txtTiempoEjecucion = new JTextField(7);
+		this.lblTimeExecution = new JLabel(AppConstants.LABEL_TIME_EXECUTION);
+		this.lblSeconds = new JLabel(AppConstants.LABEL_SECONDS);
+		this.txtTimeExecution = new JTextField(7);
 
-		rbtnRetornarTablaResultado = new JRadioButton("Retornar Tabla del Resultado", true);
-		rbtnRetornarTextoResultado = new JRadioButton("Retornar Texto del Resultado");
-		rbtnEjecutarSentenciaSql = new JRadioButton("Ejecutar Sentencia SQL");
+		this.rbtnReturnTableResult = new JRadioButton(AppConstants.RADIO_TABLE_RESULT, true);
+		this.rbtnReturnTextResult = new JRadioButton(AppConstants.RADIO_TEXT_RESULT);
+		this.rbtnExecuteSentenceSql = new JRadioButton(AppConstants.RADIO_SENTENCE_SQL);
 
-		grupoRadios = new ButtonGroup();
-		grupoRadios.add(rbtnRetornarTablaResultado);
-		grupoRadios.add(rbtnRetornarTextoResultado);
-		grupoRadios.add(rbtnEjecutarSentenciaSql);
+		this.groupRadios = new ButtonGroup();
+		this.groupRadios.add(this.rbtnReturnTableResult);
+		this.groupRadios.add(this.rbtnReturnTextResult);
+		this.groupRadios.add(this.rbtnExecuteSentenceSql);
 
-		btnGuardarConfiguracion = new JButton("Guardar configuraci�n");
-		btnGuardarConfiguracion.setActionCommand(GUARDAR_CONFIGURACION);
-		btnGuardarConfiguracion.addActionListener(this);
+		this.btnSaveConfiguration = new JButton(AppConstants.BUTTON_SAVE_CONFIGURATION);
+		this.btnSaveConfiguration.setActionCommand(SAVE_SETTINGS);
+		this.btnSaveConfiguration.addActionListener(this);
 
-		JPanel pnlIzquierda = new JPanel();
-		pnlIzquierda.setLayout(new FlowLayout(FlowLayout.LEFT));
-		pnlIzquierda.add(rbtnRetornarTablaResultado);
-		pnlIzquierda.add(rbtnRetornarTextoResultado);
-		pnlIzquierda.add(rbtnEjecutarSentenciaSql);
-		pnlIzquierda.add(btnGuardarConfiguracion);
+		JPanel pnlLeft = new JPanel();
+		pnlLeft.setLayout(new FlowLayout(FlowLayout.LEFT));
+		pnlLeft.add(this.rbtnReturnTableResult);
+		pnlLeft.add(this.rbtnReturnTextResult);
+		pnlLeft.add(this.rbtnExecuteSentenceSql);
+		pnlLeft.add(this.btnSaveConfiguration);
 
-		btnEjecutar = new JButton("Ejecutar Sentencia");
-		btnEjecutar.setActionCommand(EJECUTAR_SENTENCIA_SQL);
-		btnEjecutar.addActionListener(this);
+		this.btnRun = new JButton(AppConstants.BUTTON_EXECUTION_SENTENCE);
+		this.btnRun.setActionCommand(EXECUTE_SQL_SENTENCE_SQL);
+		this.btnRun.addActionListener(this);
 
-		JPanel pnlDerecha = new JPanel();
-		pnlDerecha.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		pnlDerecha.add(lblTiempoEjecucion);
-		pnlDerecha.add(txtTiempoEjecucion);
-		pnlDerecha.add(lblSegundos);
-		pnlDerecha.add(btnEjecutar);
-		this.txtTiempoEjecucion.setText("30");
-		this.add(pnlIzquierda, BorderLayout.WEST);
-		this.add(pnlDerecha, BorderLayout.EAST);
+		JPanel pnlRight = new JPanel();
+		pnlRight.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		pnlRight.add(this.lblTimeExecution);
+		pnlRight.add(this.txtTimeExecution);
+		pnlRight.add(this.lblSeconds);
+		pnlRight.add(this.btnRun);
+		this.txtTimeExecution.setText("30");
+		this.add(pnlLeft, BorderLayout.WEST);
+		this.add(pnlRight, BorderLayout.EAST);
 
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		String comando = e.getActionCommand();
-		if (comando.equals(EJECUTAR_SENTENCIA_SQL)) {
+		String command = e.getActionCommand();
+		if (command.equals(EXECUTE_SQL_SENTENCE_SQL)) {
 			try {
-				String timeOutStr = txtTiempoEjecucion.getText().trim();
+				String timeOutStr = this.txtTimeExecution.getText().trim();
 				if (timeOutStr == null || timeOutStr.equals(""))
-					timeOut = 0;
+					this.timeOut = 0;
 				else {
 					try {
-						timeOut = Integer.parseInt(timeOutStr);
+						this.timeOut = Integer.parseInt(timeOutStr);
 					} catch (Exception ex) {
-						timeOut = 0;
+						this.timeOut = 0;
 					}
 				}
-				if (rbtnRetornarTablaResultado.isSelected()) {
-					String numeroActual = numeroSentenciaSql++ + "";
+				if (this.rbtnReturnTableResult.isSelected()) {
+					String numberJudgment = this.numberJudgmentSql++ + "";
 					Runnable r = () -> {
 						try {
-							this.ctrl.agregarProceso(
-									"Ejecutando sentencia SQL - " + numeroActual + " - " + this.obtenerFechaActual());
-							int n = this.ctrl.ejecutarSentenciaTablaResultado(timeOut);
-							this.ctrl.eliminarProceso("Sentencia SQL finalizada - " + numeroActual + " - "
-									+ this.obtenerFechaActual() + " Total: " + n + " registros.");
+							this.ctrl.addProcess(String.format(AppConstants.LOG_EXECUTION_SQL_START, numberJudgment,
+									this.getCurrentDate()));
+							int n = this.ctrl.executeJudgmentTableResult(this.timeOut);
+							this.ctrl.deleteProcess(String.format(AppConstants.LOG_EXECUTION_SQL_END, numberJudgment,
+									this.getCurrentDate(), n));
 						} catch (Exception ex) {
 							try {
-								this.ctrl.eliminarProceso("Sentencia SQL finalizada - " + numeroActual + " - "
-										+ this.obtenerFechaActual() + " Error: " + ex.getMessage());
-								JOptionPane.showMessageDialog(this, ex.getMessage(), "Ejecutar Sentencia SQL",
+								this.ctrl.deleteProcess(String.format(AppConstants.LOG_EXECUTION_ERROR_SQL_END,
+										numberJudgment, this.getCurrentDate(), ex.getMessage()));
+								JOptionPane.showMessageDialog(this, ex.getMessage(), AppConstants.RADIO_SENTENCE_SQL,
 										JOptionPane.ERROR_MESSAGE);
 							} catch (Exception ex1) {
-								JOptionPane.showMessageDialog(this, ex1.getMessage(), "Ejecutar Sentencia SQL",
+								JOptionPane.showMessageDialog(this, ex1.getMessage(), AppConstants.RADIO_SENTENCE_SQL,
 										JOptionPane.ERROR_MESSAGE);
 							}
 						}
@@ -133,23 +134,23 @@ public class OptionsPanel extends JPanel implements ActionListener {
 					while (!future.isDone()) {
 					}
 					executor.shutdown();
-				} else if (rbtnRetornarTextoResultado.isSelected()) {
-					String numeroActual = numeroSentenciaSql++ + "";
+				} else if (this.rbtnReturnTextResult.isSelected()) {
+					String actualNumber = this.numberJudgmentSql++ + "";
 					Runnable r = () -> {
 						try {
-							this.ctrl.agregarProceso(
-									"Ejecutando sentencia SQL - " + numeroActual + " - " + this.obtenerFechaActual());
-							int n = this.ctrl.ejecutarSentenciaTextoResultado(timeOut);
-							this.ctrl.eliminarProceso("Sentencia SQL finalizada - " + numeroActual + " - "
-									+ this.obtenerFechaActual() + " Total: " + n + " registros.");
+							this.ctrl.addProcess(String.format(AppConstants.LOG_EXECUTION_SQL_START, actualNumber,
+									this.getCurrentDate()));
+							int n = this.ctrl.executeSentenceTextResult(this.timeOut);
+							this.ctrl.deleteProcess(String.format(AppConstants.LOG_EXECUTION_SQL_END, actualNumber,
+									this.getCurrentDate(), n));
 						} catch (Exception ex) {
 							try {
-								this.ctrl.eliminarProceso("Sentencia SQL finalizada - " + numeroActual + " - "
-										+ this.obtenerFechaActual() + " Error: " + ex.getMessage());
-								JOptionPane.showMessageDialog(this, ex.getMessage(), "Ejecutar Sentencia SQL",
+								this.ctrl.deleteProcess(String.format(AppConstants.LOG_EXECUTION_ERROR_SQL_END,
+										actualNumber, this.getCurrentDate(), ex.getMessage()));
+								JOptionPane.showMessageDialog(this, ex.getMessage(), AppConstants.RADIO_SENTENCE_SQL,
 										JOptionPane.ERROR_MESSAGE);
 							} catch (Exception ex1) {
-								JOptionPane.showMessageDialog(this, ex1.getMessage(), "Ejecutar Sentencia SQL",
+								JOptionPane.showMessageDialog(this, ex1.getMessage(), AppConstants.RADIO_SENTENCE_SQL,
 										JOptionPane.ERROR_MESSAGE);
 							}
 						}
@@ -162,23 +163,23 @@ public class OptionsPanel extends JPanel implements ActionListener {
 					while (!future.isDone()) {
 					}
 					executor.shutdown();
-				} else if (rbtnEjecutarSentenciaSql.isSelected()) {
-					String numeroActual = numeroSentenciaSql++ + "";
+				} else if (this.rbtnExecuteSentenceSql.isSelected()) {
+					String actualNumber = numberJudgmentSql++ + "";
 					Runnable r = () -> {
 						try {
-							this.ctrl.agregarProceso(
-									"Ejecutando sentencia SQL - " + numeroActual + " - " + this.obtenerFechaActual());
-							int n = this.ctrl.ejecutarSentenciaSQL(timeOut);
-							this.ctrl.eliminarProceso("Sentencia SQL finalizada - " + numeroActual + " - "
-									+ this.obtenerFechaActual() + " Total: " + n + " registros afectados.");
+							this.ctrl.addProcess(String.format(AppConstants.LOG_EXECUTION_SQL_START, actualNumber,
+									this.getCurrentDate()));
+							int n = this.ctrl.executeSQLstatement(this.timeOut);
+							this.ctrl.deleteProcess(String.format(AppConstants.LOG_EXECUTION_SQL_END, actualNumber,
+									this.getCurrentDate(), n));
 						} catch (Exception ex) {
 							try {
-								this.ctrl.eliminarProceso("Sentencia SQL finalizada - " + numeroActual + " - "
-										+ this.obtenerFechaActual() + " Error: " + ex.getMessage());
-								JOptionPane.showMessageDialog(this, ex.getMessage(), "Ejecutar Sentencia SQL",
+								this.ctrl.deleteProcess(String.format(AppConstants.LOG_EXECUTION_ERROR_SQL_END,
+										actualNumber, this.getCurrentDate(), ex.getMessage()));
+								JOptionPane.showMessageDialog(this, ex.getMessage(), AppConstants.RADIO_SENTENCE_SQL,
 										JOptionPane.ERROR_MESSAGE);
 							} catch (Exception ex1) {
-								JOptionPane.showMessageDialog(this, ex1.getMessage(), "Ejecutar Sentencia SQL",
+								JOptionPane.showMessageDialog(this, ex1.getMessage(), AppConstants.RADIO_SENTENCE_SQL,
 										JOptionPane.ERROR_MESSAGE);
 							}
 						}
@@ -191,30 +192,30 @@ public class OptionsPanel extends JPanel implements ActionListener {
 					}
 					executor.shutdown();
 				} else {
-					throw new Exception("Opcion no valida.");
+					throw new Exception(AppConstants.ERROR_NO_VALID_OPTION);
 				}
 			} catch (Exception ex) {
-				JOptionPane.showMessageDialog(this, ex.getMessage(), "Ejecutar Sentencia SQL",
+				JOptionPane.showMessageDialog(this, ex.getMessage(), AppConstants.RADIO_SENTENCE_SQL,
 						JOptionPane.ERROR_MESSAGE);
 			}
-		} else if (comando.equals(GUARDAR_CONFIGURACION)) {
+		} else if (command.equals(SAVE_SETTINGS)) {
 			try {
-				int confirmacion = JOptionPane.showConfirmDialog(this, "�Desea guardar la configuraci�n?",
-						"Guardar configuraci�n", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-				if (confirmacion == JOptionPane.OK_OPTION) {
-					this.ctrl.guardarConfiguracion();
+				int confirmation = JOptionPane.showConfirmDialog(this, AppConstants.QUESTION_SAVE_CONFIGURATION,
+						AppConstants.TITLE_MESSAGE_SAVE_CONFIGURATION, JOptionPane.OK_CANCEL_OPTION,
+						JOptionPane.WARNING_MESSAGE);
+				if (confirmation == JOptionPane.OK_OPTION) {
+					this.ctrl.saveSettings();
 				}
 			} catch (Exception ex) {
-				JOptionPane.showMessageDialog(this, ex.getMessage(), "Guardar configuraci�n",
+				JOptionPane.showMessageDialog(this, ex.getMessage(), AppConstants.TITLE_MESSAGE_SAVE_CONFIGURATION,
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
 
-	public String obtenerFechaActual() {
-		Date fecha = new Date();
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String fechaActual = dateFormat.format(fecha);
-		return fechaActual;
+	public String getCurrentDate() {
+		Date date = new Date();
+		DateFormat dateFormat = new SimpleDateFormat(AppConstants.DATE_FORMAT);
+		return dateFormat.format(date);
 	}
 }

@@ -4,66 +4,65 @@ import java.io.FileInputStream;
 import java.util.Properties;
 
 import com.kentaurus.jsqlquery.constants.AppConstants;
-import com.kentaurus.jsqlquery.model.Encripta;
-import com.kentaurus.jsqlquery.view.ConnectionStringPanel;
+import com.kentaurus.jsqlquery.model.Encrypt;
 
 public class ConnectionSQL {
 
 	private String dbType;
-	private String hostName; // 127.0.0.1
-	private String portName; // 3306
-	private String dataBaseName; // DAO
-	private String userName; // root
-	private String password; //
+	private String hostName;
+	private String portName;
+	private String dataBaseName;
+	private String userName;
+	private String password;
 	private String dataBaseUrl;
 
 	public ConnectionSQL() throws Exception {
 		try {
-			Encripta encripta = new Encripta(AppConstants.ENCRYPTION_PASSWORD);
-			Properties archivo = new Properties();
-			try (FileInputStream datos = new FileInputStream(AppConstants.CONNECTION_FILE)) {
-				archivo.load(datos);
+			Encrypt encrypt = new Encrypt(AppConstants.ENCRYPTION_PASSWORD);
+			Properties file = new Properties();
+			try (FileInputStream fileInput = new FileInputStream(AppConstants.CONNECTION_FILE)) {
+				file.load(fileInput);
 
-				String hostNameStr = archivo.getProperty(AppConstants.HOSTNAME_PARAMETER);
+				String hostNameStr = file.getProperty(AppConstants.HOSTNAME_PARAMETER);
 				if (hostNameStr == null)
 					throw new Exception(AppConstants.ERROR_HOSTNAME_NULL);
 				if (hostNameStr.trim().equalsIgnoreCase(""))
 					throw new Exception(AppConstants.ERROR_HOSTNAME_EMPTY);
 
-				hostName = encripta.desencripta(hostNameStr);
+				hostName = encrypt.decryptedString(hostNameStr);
 
-				String portNameStr = archivo.getProperty(AppConstants.PORT_NAME_PARAMETER);
+				String portNameStr = file.getProperty(AppConstants.PORT_NAME_PARAMETER);
 				if (portNameStr == null)
-					throw new Exception("La propiedad 'nombre puerto' no se ha definido.");
+					throw new Exception(AppConstants.ERROR_PORT_NAME_NULL);
 				if (portNameStr.trim().equalsIgnoreCase(""))
-					throw new Exception("La propiedad 'nombre puerto' no puede estar vacia.");
+					throw new Exception(AppConstants.ERROR_PORT_NAME_EMPTY);
 
-				portName = encripta.desencripta(portNameStr);
+				portName = encrypt.decryptedString(portNameStr);
 
-				String dataBaseNameStr = archivo.getProperty("dataBaseName");
+				String dataBaseNameStr = file.getProperty(AppConstants.DATABASE_PARAMETER);
 				if (dataBaseNameStr == null)
-					throw new Exception("No se ha definido el nombre de la base de datos.");
+					throw new Exception(AppConstants.ERROR_DATABASE_NULL);
 				if (dataBaseNameStr.trim().equalsIgnoreCase(""))
-					throw new Exception("El nombre de la base de datos no puede estar vacia.");
+					throw new Exception(AppConstants.ERROR_DATABASE_EMPTY);
 
-				dataBaseName = encripta.desencripta(dataBaseNameStr);
+				dataBaseName = encrypt.decryptedString(dataBaseNameStr);
 
-				String userNameStr = archivo.getProperty("userName");
+				String userNameStr = file.getProperty(AppConstants.USERNAME_PARAMETER);
 				if (userNameStr == null)
-					throw new Exception("No se ha definido un usuario para la conexion con la base de datos.");
+					throw new Exception(AppConstants.ERROR_USERNAME_NULL);
 				if (userNameStr.trim().equalsIgnoreCase(""))
-					throw new Exception("El nombre del usuario no puede estar vacio.");
+					throw new Exception(AppConstants.ERROR_USERNAME_EMPTY);
 
-				userName = encripta.desencripta(userNameStr);
+				userName = encrypt.decryptedString(userNameStr);
 
-				String passwordStr = archivo.getProperty("password");
+				String passwordStr = file.getProperty(AppConstants.PASSWORD_PARAMETER);
 				if (passwordStr == null)
-					throw new Exception("No se ha definido una contrase�a para establecer la conexion.");
+					throw new Exception(AppConstants.ERROR_PASSWORD_NULL);
 				if (passwordStr.trim().equalsIgnoreCase(""))
-					throw new Exception("La contrase�a no puede estar vacia.");
+					throw new Exception(AppConstants.ERROR_PASSWORD_EMPTY);
 
-				this.password = encripta.desencripta(passwordStr);
-				this.dbType = ConnectionStringPanel.MOTORES_DB[0];
+				this.password = encrypt.decryptedString(passwordStr);
+				this.dbType = AppConstants.DB_TYPES[0];
 			}
 		} catch (Exception ex) {
 			throw new Exception(ex.getMessage());
@@ -111,14 +110,17 @@ public class ConnectionSQL {
 	}
 
 	public String getDataBaseUrl() {
-		if (this.dbType.equals(ConnectionStringPanel.MOTORES_DB[0])) {
-			return dataBaseUrl = "jdbc:sqlserver://" + hostName + ":" + portName + ";databaseName=" + dataBaseName;
-		} else if (this.dbType.equals(ConnectionStringPanel.MOTORES_DB[1])) {
-			return dataBaseUrl = "jdbc:mysql://" + hostName + ":" + portName + "/" + dataBaseName
-					+ "?verifyServerCertificate=true&useSSL=true&requireSSL=true";
+		String dataBaseUrlTepm = "";
+		if (this.dbType.equals(AppConstants.DB_TYPES[0])) {
+			dataBaseUrlTepm = AppConstants.SQL_SERVER_END_POINT;
+		} else if (this.dbType.equals(AppConstants.DB_TYPES[1])) {
+			dataBaseUrlTepm = AppConstants.MY_SQL_END_POINT;
 		} else {
-			return dataBaseUrl = "jdbc:oracle:thin:@" + hostName + ":" + portName + ":" + dataBaseName;
+			dataBaseUrlTepm = AppConstants.ORACLE_END_POINT;
 		}
+		return dataBaseUrlTepm.replace(AppConstants.HOSTNAME_PARAMETER_END_POINT, this.hostName)
+				.replace(AppConstants.PORT_NAME_PARAMETER_END_POINT, this.portName)
+				.replace(AppConstants.DATABASE_PARAMETER_END_POINT, this.dataBaseName);
 	}
 
 	public void setDataBaseUrl(String dataBaseUrl) {

@@ -14,20 +14,20 @@ public class QueryPanel extends JPanel {
 
 	public QueryPanel() {
 		this.setLayout(new BorderLayout());
-		txtQuery = new JTextArea(10, 50);
-		txtQuery.setLineWrap(true);
-		txtQuery.setWrapStyleWord(true);
-		txtQuery.setFont(new Font("Arial", Font.BOLD, 12));
+		this.txtQuery = new JTextArea(10, 50);
+		this.txtQuery.setLineWrap(true);
+		this.txtQuery.setWrapStyleWord(true);
+		this.txtQuery.setFont(new Font("Arial", Font.BOLD, 12));
 		JScrollPane scroll = new JScrollPane(txtQuery);
 		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		this.add(scroll, BorderLayout.CENTER);
 	}
 
-	public String obtenerQuery() {
-		String querySeleccionado = txtQuery.getSelectedText();
+	public String getQuery() {
+		String querySelected = txtQuery.getSelectedText();
 		String query = txtQuery.getText();
-		if (querySeleccionado != null && !querySeleccionado.trim().equals(""))
-			return querySeleccionado;
+		if (querySelected != null && !querySelected.trim().equals(""))
+			return querySelected;
 		else
 			return query;
 	}

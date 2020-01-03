@@ -11,95 +11,94 @@ import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import com.kentaurus.jsqlquery.connection.ConnectionSQL;
+import com.kentaurus.jsqlquery.constants.AppConstants;
 
 public class ConnectionStringPanel extends JPanel {
+	
 	private static final long serialVersionUID = 1L;
-	public static final String[] MOTORES_DB = { "SQL Server", "MySQL", "Oracle" };
 
-	private ConnectionSQL cadenaConexion;
-
-	private JLabel lblServidor;
+	private ConnectionSQL connectionSQL;
+	private JLabel lblServer;
 	private JLabel lblDNS;
-	private JLabel lblUsuario;
+	private JLabel lblUser;
 	private JLabel lblPassword;
-	private JLabel lblPuerto;
-	private JLabel lblMotorDB;
-
-	private JTextField txtServidor;
+	private JLabel lblPort;
+	private JLabel lblDBTypes;
+	private JTextField txtServer;
 	private JTextField txtDNS;
-	private JTextField txtUsuario;
+	private JTextField txtUser;
 	private JPasswordField txtPassword;
-	private JTextField txtPuerto;
-	private JComboBox<String> cmbMotorDB;
+	private JTextField txtPort;
+	private JComboBox<String> cmbDBTypes;
 
 	public ConnectionStringPanel() {
-		this.setBorder(new TitledBorder("Connection String"));
-		GroupLayout grupo = new GroupLayout(this);
-		this.setLayout(grupo);
+		this.setBorder(new TitledBorder(AppConstants.PANEL_TITLE_CONNECTION));
+		GroupLayout group = new GroupLayout(this);
+		this.setLayout(group);
 
-		this.lblServidor = new JLabel("Servidor: ");
-		this.lblDNS = new JLabel("DSN: ");
-		this.lblUsuario = new JLabel("Usuario: ");
-		this.lblPassword = new JLabel("Password: ");
-		this.lblPuerto = new JLabel("Puerto: ");
-		this.lblMotorDB = new JLabel("Motor DB: ");
+		this.lblServer = new JLabel(AppConstants.LABEL_SERVER);
+		this.lblDNS = new JLabel(AppConstants.LABEL_DSN);
+		this.lblUser = new JLabel(AppConstants.LABEL_USER);
+		this.lblPassword = new JLabel(AppConstants.LABEL_PASSWORD);
+		this.lblPort = new JLabel(AppConstants.LABEL_PORT);
+		this.lblDBTypes = new JLabel(AppConstants.LABEL_TYPE_DB);
 
-		this.txtServidor = new JTextField();
+		this.txtServer = new JTextField();
 		this.txtDNS = new JTextField();
-		this.txtUsuario = new JTextField();
+		this.txtUser = new JTextField();
 		this.txtPassword = new JPasswordField();
-		this.txtPuerto = new JTextField();
-		DefaultComboBoxModel<String> modelo = new DefaultComboBoxModel<>(MOTORES_DB);
-		this.cmbMotorDB = new JComboBox<>(modelo);
+		this.txtPort = new JTextField();
+		DefaultComboBoxModel<String> modelo = new DefaultComboBoxModel<>(AppConstants.DB_TYPES);
+		this.cmbDBTypes = new JComboBox<>(modelo);
 
-		grupo.setAutoCreateContainerGaps(true);
-		grupo.setAutoCreateGaps(true);
+		group.setAutoCreateContainerGaps(true);
+		group.setAutoCreateGaps(true);
 
-		grupo.setVerticalGroup(grupo.createSequentialGroup()
-				.addGroup(grupo.createParallelGroup().addComponent(lblServidor).addComponent(txtServidor))
-				.addGroup(grupo.createParallelGroup().addComponent(lblDNS).addComponent(txtDNS))
-				.addGroup(grupo.createParallelGroup().addComponent(lblUsuario).addComponent(txtUsuario))
-				.addGroup(grupo.createParallelGroup().addComponent(lblPassword).addComponent(txtPassword))
-				.addGroup(grupo.createParallelGroup().addComponent(lblPuerto).addComponent(txtPuerto))
-				.addGroup(grupo.createParallelGroup().addComponent(lblMotorDB).addComponent(cmbMotorDB)));
+		group.setVerticalGroup(group.createSequentialGroup()
+				.addGroup(group.createParallelGroup().addComponent(this.lblServer).addComponent(this.txtServer))
+				.addGroup(group.createParallelGroup().addComponent(this.lblDNS).addComponent(this.txtDNS))
+				.addGroup(group.createParallelGroup().addComponent(this.lblUser).addComponent(this.txtUser))
+				.addGroup(group.createParallelGroup().addComponent(this.lblPassword).addComponent(this.txtPassword))
+				.addGroup(group.createParallelGroup().addComponent(this.lblPort).addComponent(this.txtPort))
+				.addGroup(group.createParallelGroup().addComponent(this.lblDBTypes).addComponent(this.cmbDBTypes)));
 
-		grupo.setHorizontalGroup(grupo.createSequentialGroup()
-				.addGroup(grupo.createParallelGroup().addComponent(lblServidor).addComponent(lblDNS)
-						.addComponent(lblUsuario).addComponent(lblPassword).addComponent(lblPuerto)
-						.addComponent(lblMotorDB))
+		group.setHorizontalGroup(group.createSequentialGroup()
+				.addGroup(group.createParallelGroup().addComponent(this.lblServer).addComponent(this.lblDNS)
+						.addComponent(this.lblUser).addComponent(this.lblPassword).addComponent(this.lblPort)
+						.addComponent(this.lblDBTypes))
 
-				.addGroup(grupo.createParallelGroup().addComponent(txtServidor).addComponent(txtDNS)
-						.addComponent(txtUsuario).addComponent(txtPassword).addComponent(txtPuerto)
-						.addComponent(cmbMotorDB)));
+				.addGroup(group.createParallelGroup().addComponent(this.txtServer).addComponent(this.txtDNS)
+						.addComponent(this.txtUser).addComponent(this.txtPassword).addComponent(this.txtPort)
+						.addComponent(this.cmbDBTypes)));
 	}
 
-	public void actualizarParametros() {
+	public void updateParameters() {
 		try {
-			cadenaConexion = new ConnectionSQL();
-			this.txtServidor.setText(cadenaConexion.getHostName());
-			this.txtDNS.setText(cadenaConexion.getDataBaseName());
-			this.txtUsuario.setText(cadenaConexion.getUserName());
-			this.txtPassword.setText(cadenaConexion.getPassword());
-			this.txtPuerto.setText(cadenaConexion.getPortName());
+			this.connectionSQL = new ConnectionSQL();
+			this.txtServer.setText(this.connectionSQL.getHostName());
+			this.txtDNS.setText(this.connectionSQL.getDataBaseName());
+			this.txtUser.setText(this.connectionSQL.getUserName());
+			this.txtPassword.setText(this.connectionSQL.getPassword());
+			this.txtPort.setText(this.connectionSQL.getPortName());
 		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(this, ex.getMessage(), "Actualizar Paranetros", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, ex.getMessage(), AppConstants.TITLE_MESSAGE_UPDATE_PARAMETERS, JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
-	public ConnectionSQL obtenerCadenaSQL() {
-		cadenaConexion.setHostName(this.txtServidor.getText());
-		cadenaConexion.setDataBaseName(this.txtDNS.getText());
-		cadenaConexion.setUserName(txtUsuario.getText());
-		char[] pass = txtPassword.getPassword();
-		cadenaConexion.setPassword(new String(pass));
-		cadenaConexion.setPortName(txtPuerto.getText());
-		String tipoMotor = cmbMotorDB.getSelectedItem().toString();
-		if (tipoMotor.equals(MOTORES_DB[0]))
-			cadenaConexion.setMotorBD(tipoMotor);
-		else if (tipoMotor.equals(MOTORES_DB[1]))
-			cadenaConexion.setMotorBD(tipoMotor);
+	public ConnectionSQL getConnectionSQL() {
+		this.connectionSQL.setHostName(this.txtServer.getText());
+		this.connectionSQL.setDataBaseName(this.txtDNS.getText());
+		this.connectionSQL.setUserName(this.txtUser.getText());
+		char[] pass = this.txtPassword.getPassword();
+		this.connectionSQL.setPassword(new String(pass));
+		this.connectionSQL.setPortName(this.txtPort.getText());
+		String dbType = this.cmbDBTypes.getSelectedItem().toString();
+		if (dbType.equals(AppConstants.DB_TYPES[0]))
+			this.connectionSQL.setMotorBD(dbType);
+		else if (dbType.equals(AppConstants.DB_TYPES[1]))
+			this.connectionSQL.setMotorBD(dbType);
 		else
-			cadenaConexion.setMotorBD(tipoMotor);
-		return cadenaConexion;
+			this.connectionSQL.setMotorBD(dbType);
+		return this.connectionSQL;
 	}
 }

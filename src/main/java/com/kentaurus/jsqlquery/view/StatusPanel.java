@@ -9,63 +9,65 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JSeparator;
 
+import com.kentaurus.jsqlquery.constants.AppConstants;
+
 public class StatusPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
-	private int numeroDeProceso;
+	private int processNumber;
 
-	private JLabel lblEjecutando;
-	private JLabel lblProcesosDescripcion;
-	private JLabel lblProcesosEnCola;
-	private JProgressBar barraProcesos;
-	private JSeparator linea;
+	private JLabel lblExecuting;
+	private JLabel lblProcessesDescription;
+	private JLabel lblProcessesQueue;
+	private JProgressBar processBar;
+	private JSeparator line;
 
 	public StatusPanel() {
 		this.setLayout(new BorderLayout());
-		this.numeroDeProceso = 0;
-		lblEjecutando = new JLabel("Ejecutando: ");
-		lblProcesosDescripcion = new JLabel("Procesos en cola: ");
-		lblProcesosEnCola = new JLabel("0");
-		barraProcesos = new JProgressBar();
-		barraProcesos.setEnabled(false);
-		linea = new JSeparator(JSeparator.VERTICAL);
-		linea.setPreferredSize(new Dimension(1, 20));
+		this.processNumber = 0;
+		this.lblExecuting = new JLabel(AppConstants.LABEL_EXECUTION);
+		this.lblProcessesDescription = new JLabel(AppConstants.LABEL_QUEUE);
+		this.lblProcessesQueue = new JLabel("0");
+		this.processBar = new JProgressBar();
+		this.processBar.setEnabled(false);
+		this.line = new JSeparator(JSeparator.VERTICAL);
+		this.line.setPreferredSize(new Dimension(1, 20));
 
-		JPanel pnlIzquierda = new JPanel();
-		pnlIzquierda.setLayout(new FlowLayout(FlowLayout.LEFT));
-		pnlIzquierda.add(lblEjecutando);
-		pnlIzquierda.add(barraProcesos);
-		pnlIzquierda.add(linea);
-		pnlIzquierda.add(lblProcesosDescripcion);
-		pnlIzquierda.add(lblProcesosEnCola);
+		JPanel pnlLeft = new JPanel();
+		pnlLeft.setLayout(new FlowLayout(FlowLayout.LEFT));
+		pnlLeft.add(this.lblExecuting);
+		pnlLeft.add(this.processBar);
+		pnlLeft.add(this.line);
+		pnlLeft.add(this.lblProcessesDescription);
+		pnlLeft.add(this.lblProcessesQueue);
 
-		JPanel pnlDerecha = new JPanel();
-		pnlDerecha.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		pnlDerecha.add(new JLabel("Copyright � 2018 Todos los derechos reservados."));
+		JPanel pnlRight = new JPanel();
+		pnlRight.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		pnlRight.add(new JLabel(AppConstants.LABEL_COPYRIGHT));
 
-		this.add(pnlIzquierda, BorderLayout.WEST);
-		this.add(pnlDerecha, BorderLayout.EAST);
+		this.add(pnlLeft, BorderLayout.WEST);
+		this.add(pnlRight, BorderLayout.EAST);
 	}
 
-	public void iniciarBarraDeEstado() {
-		this.barraProcesos.setIndeterminate(true);
+	public void startStateBar() {
+		this.processBar.setIndeterminate(true);
 	}
 
-	public void detenerBarraDeEstado() {
-		this.barraProcesos.setIndeterminate(false);
+	public void stopStateBar() {
+		this.processBar.setIndeterminate(false);
 	}
 
-	public void agregarProceso() {
-		this.numeroDeProceso++;
-		this.lblProcesosEnCola.setText(numeroDeProceso + "");
-		if (!barraProcesos.isIndeterminate())
-			this.iniciarBarraDeEstado();
+	public void addProcess() {
+		this.processNumber++;
+		this.lblProcessesQueue.setText(processNumber + "");
+		if (!processBar.isIndeterminate())
+			this.startStateBar();
 	}
 
-	public void eliminarProceso() {
-		this.numeroDeProceso--;
-		this.lblProcesosEnCola.setText(numeroDeProceso + "");
-		if (numeroDeProceso <= 0)
-			this.detenerBarraDeEstado();
+	public void deleteProcess() {
+		this.processNumber--;
+		this.lblProcessesQueue.setText(processNumber + "");
+		if (processNumber <= 0)
+			this.stopStateBar();
 	}
 }
